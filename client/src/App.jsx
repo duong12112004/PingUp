@@ -29,7 +29,6 @@ const App = () => {
     const fetchData = async () => {
 
       if (user) {
-        getToken().then((token)=>console.log(token))
         const token= await getToken()
         dispatch(fetchUser(token))
         dispatch(fetchConnections(token))
@@ -57,7 +56,9 @@ const App = () => {
           ),{position:"bottom-right"})
         }
       }
-      return eventSource.close()
+      return ()=>{
+        eventSource.close()
+      }
     }
   },[user,dispatch])
 
