@@ -187,8 +187,8 @@ export const sendConnectionRequest =async (req,res)=>{
 
         const connection= await Connection.findOne({
             $or: [
-                {rom_user_id: userId, to_user_id: id},
-                {rom_user_id: id, to_user_id: userId}
+                {from_user_id: userId, to_user_id: id},
+                {from_user_id: id, to_user_id: userId}
             ]
         })
 
@@ -274,7 +274,7 @@ export const getUserProfiles =async (req,res)=>{
         if(!profile){
             return res.json({success:false, message:"Profile not found"});
         }
-        const posts = await Post.find({user:profileId}.populate('user'))
+        const posts = await Post.find({user:profileId}).populate('user')
         res.json({success:true,profile,posts})
     } catch (error) {
         console.log(error);
