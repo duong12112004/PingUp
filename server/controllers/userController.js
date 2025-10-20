@@ -157,7 +157,7 @@ export const unfollowUser = async (req, res) => {
         await user.save()
 
         const toUser =await User.findById(id)
-        toUser.followers =toUserser.followers.filter(user=>user !== userId);
+        toUser.followers =toUser.followers.filter(user=>user !== userId);
         await toUser.save()
 
         res.json({success: true , message: 'You are no longer following this user'})
@@ -178,7 +178,7 @@ export const sendConnectionRequest =async (req,res)=>{
         // check if user sent more than 20 connection request in last 24 hours
 
         const last24Hours =new Date(Date.now() - 24 * 60 * 60 * 1000)
-        const connectionRequests= await Connection.find({from_user_id: userId, created_at: {$gt: last24Hours}})
+        const connectionRequests= await Connection.find({from_user_id: userId, createdAt: {$gt: last24Hours}})
         if(connectionRequests.length >=20){
             return res.json({success: false,message: 'You have sent more than 20 connection request in last 24 hours'})
         }

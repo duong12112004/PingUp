@@ -1,29 +1,31 @@
-import React, { useEffect, useState } from 'react'
-import {UserPlus,UserCheck,UserRoundPen,MessageSquare, Users, Table} from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { UserPlus,UserCheck,UserRoundPen,MessageSquare, Users } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import {useDispatch, useSelector} from 'react-redux'
 import { useAuth } from '@clerk/clerk-react'
+
 import { fetchConnections } from '../features/connections/connectionsSlice'
 import api from '../api/axios'
 import toast from 'react-hot-toast'
+import Button from '../components/Button'
 
 const Connections = () => {
 
-  const [currentTab,setCurrentTab]=useState('Followers')
+  const [currentTab, setCurrentTab] = useState('Followers');
 
-  const navigate =useNavigate()
-  const {getToken}= useAuth()
-  const dispatch =useDispatch()
+  const navigate = useNavigate();
+  const { getToken } = useAuth();
+  const dispatch = useDispatch();
 
 
-  const {connections,pendingConnections,followers,following}=useSelector((state)=>state.connections)
+  const { connections, pendingConnections, followers, following } = useSelector((state)=>state.connections);
 
   const dataArray=[
-    {label: 'Followers',value:followers, icon:Users},
-    {label: 'Following',value:following, icon:UserCheck},
-    {label: 'Pending',value:pendingConnections, icon:UserRoundPen},
-    {label: 'Connections',value:connections, icon:UserPlus},
-  ]
+    {label: 'Followers', value:followers, icon:Users},
+    {label: 'Following', value:following, icon:UserCheck},
+    {label: 'Pending', value:pendingConnections, icon:UserRoundPen},
+    {label: 'Connections', value:connections, icon:UserPlus},
+  ];
 
   const handleUnfollow = async (userId)=>{
     try {
@@ -62,7 +64,7 @@ const Connections = () => {
     getToken().then((token)=>{
       dispatch(fetchConnections(token))
     })
-  },[])
+  },[getToken,dispatch])
 
   return (
     <div className='min-h-screen bg-slate-50'>
@@ -116,24 +118,30 @@ const Connections = () => {
                     <p className='text-sm text-gray-600'>{user.bio.slice(0,30)}...</p>
                     <div className='flex max-sm:flex-col gap-2 mt-4 '>
                       {
-                        <button onClick={()=>navigate(`/profile/${user._id}`)}  className='w-full p-2 text-sm rounded bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 active:scale-95 transition text-white cursor-pointer'>View Profile</button>
+                        <Button onClick={()=>navigate(`/profile/${user._id}`)}  className='w-full text-sm'>
+                          View Profile
+                        </Button>
                       }
                       {
                         currentTab === 'Following' &&(
-                          <button onClick={()=>handleUnfollow(user._id)} className='w-full p-2 text-sm rounded bg-slate-100 hover:bg-slate-200 text-black active:scale-95 transition cursor-pointer'>Unfollow</button>
+                          <Button onClick={()=>handleUnfollow(user._id)} variant='secondary' className='w-full text-sm'>
+                            Unfollow
+                          </Button>
                         )
                       }
                       {
                         currentTab === 'Pending' &&(
-                          <button onClick={()=>acceptConnection(user._id)} className='w-full p-2 text-sm rounded bg-slate-100 hover:bg-slate-200 text-black active:scale-95 transition cursor-pointer'>Accept</button>
+                          <Button onClick={()=>acceptConnection(user._id)} variant='secondary' className='w-full text-sm'>
+                            Accept
+                          </Button>
                         )
                       }
                       {
                         currentTab === 'Connections' &&(
-                          <button onClick={()=>navigate(`/messages/${user._id}`)} className='w-full p-2 text-sm rounded bg-slate-100 hover:bg-slate-200 text-slate-800 active:scale-95 transition cursor-pointer flex items-center justify-center gap-1'>
+                          <Button onClick={()=>navigate(`/messages/${user._id}`)} variant='secondary' className='w-full text-sm'>
                             <MessageSquare className='w-4 h-4 '/>
-                            Message
-                            </button>
+                              Message
+                            </Button>
                         )
                       }
                     </div>

@@ -1,22 +1,23 @@
-import React, { use, useState } from 'react'
-import { dummyUserData } from '../assets/assets'
+import { useState } from 'react'
 import { Image, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {useSelector} from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '@clerk/clerk-react'
 
+import Button from '../components/Button.jsx'
+
 const CreatePost = () => {
 
-  const navigate=useNavigate()
-  const [content, setContent] = useState('')
-  const [images, setImages] = useState([])
-  const [loading, setLoading] = useState(false)
+  const navigate= useNavigate();
+  const [content, setContent] = useState('');
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const user = useSelector((state)=>state.user.value);
 
-  const {getToken} = useAuth()
+  const {getToken} = useAuth();
 
   const handleSubmit=async()=>{
     if(!images.length && !content){
@@ -45,7 +46,7 @@ const CreatePost = () => {
       }
     } catch (error) {
       console.log(error.message)
-      throw new Error(data.message)
+      throw new Error(error.message)
     }
     setLoading(false)
   }
@@ -62,12 +63,14 @@ const CreatePost = () => {
         {/* {Form} */}
         <div className='max-w-xl bg-white p-4 sm:pb-3 rounded-xl shadow-md space-y-4'>
           {/* {Header} */}
-          <div className='flex items-center grap-3 '>
-            <img src={user.profile_picture} alt="" className='w-12 h-12 rounded-full shadow' />
-            <div >
-              <h2 className='font-semibold'>{user.full_name}</h2>
-              <p className='text-sm text-gray-500'>@{user.username}</p>
-            </div>
+          <div className='flex items-center gap-3 '>
+            <Link to={`/profile`}>
+            <img src={user.profile_picture} alt="User profile" className='w-12 h-12 rounded-full shadow transition-opacity hover:opacity-90' />
+            </Link>
+            <Link to={`/profile`} className='group'>
+                <h2 className='font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors'>{user.full_name}</h2>
+                <p className='text-sm text-gray-500 grour-hover:underline'>@{user.username}</p>
+            </Link>
           </div>
           {/* {Text Area} */}
           <textarea className='w-full resize-none max-h-20 mt-4 text-sm outline-none placeholder-gray-400' placeholder="What's happening?" onChange={(e) => setContent(e.target.value)} value={content} />
@@ -92,15 +95,16 @@ const CreatePost = () => {
             </label>
 
             <input type="file" id="images" accept='image/*' hidden multiple onChange={(e)=>setImages([...images, ...e.target.files])} />
-            <button disabled={loading} onClick={()=>toast.promise(
+            <Button disabled={loading} onClick={()=>toast.promise(
               handleSubmit(),
               {
                 loading: 'uploading ...',
                 success: <p >Post Added</p>,
                 error: <p>Post Not Added</p>
               }
-            )} className='text-sm bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 active:scale-95 transition text-white font-medium px-8 py-2 rounded-md cursor-pointer'> Publish Post
-            </button> 
+            )} className='text-sm text-white px-8'> 
+            Publish Post
+            </Button> 
           </div>
         </div>
       </div>

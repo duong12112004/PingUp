@@ -1,5 +1,9 @@
-import React, { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
+import toast, { Toaster } from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import { useUser, useAuth } from '@clerk/clerk-react'
+
 import Login from './pages/Login'
 import Feed from './pages/Feed'
 import Messages from './pages/Messages'
@@ -8,22 +12,21 @@ import Connections from './pages/Connections'
 import Discover from './pages/Discover'
 import Profile from './pages/Profile'
 import CreatePost from './pages/CreatePost'
-import { useUser, useAuth } from '@clerk/clerk-react'
 import Layout from './pages/Layout'
-import toast, { Toaster } from 'react-hot-toast'
-import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+
 import { fetchUser } from './features/user/userSlice'
 import { fetchConnections } from './features/connections/connectionsSlice'
 import { addMessage } from './features/messages/messagesSlice'
-import Notification from './components/Notification'
-const App = () => {
-  const { user } = useUser()
-  const { getToken } = useAuth()
-  const {pathname}=useLocation()
-  const pathnameRef= useRef(pathname)
 
-  const dispatch=useDispatch()
+import Notification from './components/Notification'
+
+const App = () => {
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  const { pathname } = useLocation();
+  const pathnameRef = useRef(pathname);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +41,7 @@ const App = () => {
   }, [user, getToken, dispatch])
 
   useEffect(()=>{
-    pathnameRef.current=pathname
+    pathnameRef.current = pathname;
   },[pathname])
 
   useEffect(()=>{
@@ -62,7 +65,7 @@ const App = () => {
     }
   },[user,dispatch])
 
-  const { isLoaded, isSignedIn } = useUser()
+  const { isLoaded } = useUser();
 
   if (!isLoaded) {
     // Trạng thái chờ: có thể return spinner, loading screen

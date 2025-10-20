@@ -23,11 +23,11 @@ export const sseController = (req, res) => {
     //Send an initial event to client
     res.write('log: Connected to SSE stream\n\n')
 
-    // Handle client dissconnection
+    // Handle client disconnection
     req.on('close', () => {
         //Remove the client's response object from the connections array 
         delete connections[userId]
-        console.log('Client dissconnected');
+        console.log('Client disconnected');
     })
 }
 
@@ -92,7 +92,7 @@ export const getChatMessages = async (req, res) => {
                 {from_user_id:userId,to_user_id},
                 {from_user_id:to_user_id,to_user_id:userId},
             ]
-        }).sort({created_at:-1})
+        }).sort({createdAt:-1})
         //mark messages as seen
         await Message.updateMany({from_user_id: to_user_id, to_user_id:userId},{seen:true})
 
@@ -105,7 +105,7 @@ export const getChatMessages = async (req, res) => {
 export const getUserRecentMessages=async(req,res)=>{
     try {
         const {userId}=req.auth();
-        const messages=await Message.find({to_user_id:userId}).populate('from_user_id to_user_id').sort({created_at:-1});
+        const messages=await Message.find({to_user_id:userId}).populate('from_user_id to_user_id').sort({createdAt:-1});
 
         res.json({success:true,messages});
     } catch (error) {

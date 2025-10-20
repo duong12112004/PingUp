@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { dummyMessagesData, dummyUserData } from '../assets/assets'
-import { data, useParams } from 'react-router-dom'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { useParams } from 'react-router-dom'
 import { ImageIcon, SendHorizonal } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuth } from '@clerk/clerk-react'
@@ -21,16 +20,16 @@ const {messages}=useSelector((state)=>state.messages)
 
   const connections=useSelector((state)=>state.connections.connections)
 
-  const fetchUserMessages=async()=>{
+  const fetchUserMessages = useCallback(async() => {
     try {
       const token=await getToken()
       dispatch(fetchMessages({token,userId}))
     } catch (error) {
       toast.error(error.message)
     }
-  }
+  }, [getToken, dispatch, userId]);
 
-  const sendMessage=async()=>{
+  const sendMessage = useCallback(async() => {
     try {
       if(!text && !image) return
       const token=await getToken()
@@ -52,21 +51,21 @@ const {messages}=useSelector((state)=>state.messages)
     } catch (error) {
       toast.error(error.message)
     }
-  }
+  }, [text, image, getToken, userId, dispatch]);
 
   useEffect(()=>{
     if(connections.length>0){
       const user=connections.find(connection=>connection._id===userId)
       setUser(user)
     }
-  },[connections,userId])
+  },[connections, userId])
 
     useEffect(()=>{
     fetchUserMessages()
     return()=>{
       dispatch(resetMessages())
     }
-  },[userId])
+  },[userId, dispatch, fetchUserMessages])
 
   useEffect(()=>{
     messagesEndRef.current?.scrollIntoView({behavior:"smooth"})

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {Link, useParams} from 'react-router-dom'
-import {dummyUserData,dummyPostsData} from '../assets/assets'
 import Loading from '../components/Loading'
 import PostCard from '../components/PostCard'
 import UserProfileInfo from '../components/UserProfileInfo'
@@ -10,6 +9,7 @@ import { useAuth } from '@clerk/clerk-react'
 import api from '../api/axios'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
+
 const Profile = () => {
 
   const currentUser = useSelector((state)=>state.user.value);
@@ -21,7 +21,7 @@ const Profile = () => {
   const [activeTab,setActiveTab]=useState('posts')
   const [showEdit,setShowEdit]=useState(false)
 
-  const fetchUser=async(profileId)=>{
+  const fetchUser = useCallback(async(profileId)=>{
     const token=await getToken()
     try {
       const {data}=await api.post(`/api/user/profiles`,{profileId},{
@@ -36,7 +36,7 @@ const Profile = () => {
     } catch (error) {
       toast.error(error.message)
     }
-  }
+  }, [getToken]);
   
   useEffect(()=>{
     if(profileId){
@@ -45,7 +45,7 @@ const Profile = () => {
     }else{
       fetchUser(currentUser._id)
     }
-},[profileId,currentUser])
+},[profileId, currentUser, fetchUser])
 
 
   return user ? (
