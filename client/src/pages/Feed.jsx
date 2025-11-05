@@ -54,27 +54,11 @@ const Feed = () => {
       </div>
       {/* {right sidebar} */}
       <div className='max-xl:hidden sticky top-0 '>
-          <div className='max-w-xs bg-white text-xs p-4 rounded-md shadow-md'>
-            <h3 className='text-slate-800 font-semibold mb-2'>Sponsored</h3>
-            <a 
-              href="https://www.udemy.com/course/java-the-complete-java-developer-course/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="group"
-            >
-              <img 
-                src="https://vtiacademy.edu.vn/upload/images/artboard-1-copy-7-100.jpg"
-                alt="Quảng cáo khóa học Java" 
-                className='w-full h-40 object-cover rounded-md mb-2' // <-- Sửa class để ảnh đẹp hơn
-              />
-              
-              <p className='text-slate-700 font-semibold group-hover:text-blue-600 transition-colors'>
-                Khóa học Java Toàn diện 2025
-              </p>
-              <p className='text-slate-600'>
-                Học Java từ cơ bản đến nâng cao, xây dựng 8 dự án thực tế. Bắt đầu ngay!
-              </p>
-            </a>
+          <div className='max-w-xs bg-white text-xs p-4 rounded-md'>
+            <h3 className='text-slate-800 font-semibold'>sponsored</h3>
+            <img src={assets.sponsored_img} alt="" className='w-75 h-50 rounded-md'/>
+            <p className='text-slate-600'>Email marketing</p>
+            <p className='text-slate-600'>Supercharge your marketing with a powerful, easy-to-use platform built for result.</p>
           </div>
           <RecentMessages/>
       </div>
