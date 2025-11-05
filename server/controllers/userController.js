@@ -70,7 +70,7 @@ export const updateUserData = async (req, res) => {
             const buffer =fs.readFileSync(cover.path)
             const response=await imagekit.upload({
                 file: buffer,
-                fileName: profile.originalname,
+                fileName: cover.originalname,
             })
             const url =imagekit.url({
                 path: response.filePath,
@@ -158,10 +158,11 @@ export const unfollowUser = async (req, res) => {
 
         const toUser =await User.findById(id)
         toUser.followers =toUser.followers.filter(user=>user !== userId);
+
         await toUser.save()
 
-        res.json({success: true , message: 'You are no longer following this user'})
-       
+        res.json({success: true , message: 'You are no longer following this user', following: user.following, followers: toUser.followers})
+        
     } catch (error) {
         console.log(error);
         res.json({success: false,message :error.message})

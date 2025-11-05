@@ -29,7 +29,10 @@ const Profile = () => {
       })
       if(data.success){
         setUser(data.profile)
-        setPosts(data.posts)
+        const sortedPosts = [...data.posts].sort((a, b) => 
+          new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setPosts(sortedPosts);
       }else{
         toast.error(data.message)
       }
@@ -75,7 +78,13 @@ const Profile = () => {
           {
             activeTab === 'posts' && (
               <div className='mt-6 flex flex-col items-center gap-6'>
-                {posts.map((post)=> <PostCard key={post._id} post={post}/>)}
+                {posts.map((post)=> (
+                  <PostCard 
+                    key={post._id} 
+                    post={post}
+                    onDeletePost={(deletedId) => setPosts(prev => prev.filter(p => p._id !== deletedId))}
+                  />
+                ))}
               </div>
             )
           }

@@ -2,12 +2,14 @@ import fs from "fs";
 import imagekit from "../configs/imageKit.js";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
+import Comment from "../models/Comment.js";
 
 
 // Add Post
 export const addPost = async (req, res) => {
     try {
-        const { userId } = req.auth();
+        // support both req.userId (from protect middleware) and req.auth()
+        const userId = req.userId || (req.auth ? (await req.auth()).userId : null);
         const { content, post_type } = req.body;
         const images = req.files
 
@@ -51,14 +53,14 @@ export const addPost = async (req, res) => {
 //Get Post
 export const getFeedPost = async (req, res) => {
     try {
-        const {userId} =req.auth();
-        const user =await User.findById(userId)
+        const userId = req.userId || (req.auth ? (await req.auth()).userId : null);
+        const user = await User.findById(userId)
 
         // User connection add followings
-        const userIds=[userId, ...user.connections, ...user.following]
-        const posts=await Post.find({user:{$in:userIds}}).populate('user').sort({createdAt:-1});
+        const userIds = [userId, ...user.connections, ...user.following]
+        const posts = await Post.find({ user: { $in: userIds } }).populate('user').sort({ createdAt: -1 });
 
-        res.json({success:true,posts})
+        res.json({ success: true, posts })
     } catch (error) {
         console.log(error)
         res.json({success:false,message: error.message});
@@ -69,10 +71,10 @@ export const getFeedPost = async (req, res) => {
 
 export const likePost = async (req, res) => {
     try {
-        const {userId} =req.auth();
-        const {postId} =req.body;
+        const userId = req.userId || (req.auth ? (await req.auth()).userId : null);
+        const {postId} = req.body;
 
-        const post =await Post.findById(postId)
+        const post = await Post.findById(postId)
 
         if(post.likes_count.includes(userId)){
             post.likes_count=post.likes_count.filter(user=>user !==userId)
@@ -88,3 +90,31 @@ export const likePost = async (req, res) => {
         res.json({success:false,message: error.message});
     }
 }
+
+// Delete Post
+export const deletePost = async (req, res) => {
+    try {
+        const userId = req.userId || (req.auth ? (await req.auth()).userId : null);
+        const {postId} = req.params;
+        const post = await Post.findById(postId)
+
+        if(!post){
+            return res.status(404).json({success:false,message:"Post not found"});
+        }
+        // post.user may be string (User._id is string) or ObjectId; compare accordingly
+        const ownerId = typeof post.user === 'string' ? post.user : post.user.toString();
+        if(ownerId !== userId){
+            return res.status(403).json({success:false,message:"Unauthorized action"});
+        }
+
+        // delete related comments
+        await Comment.deleteMany({ post: postId });
+
+        await Post.findByIdAndDelete(postId);
+        res.json({success:true,message:"Post deleted successfully"});
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message: error.message});
+    }
+}
+        

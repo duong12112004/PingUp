@@ -20,6 +20,12 @@ const Connections = () => {
 
   const { connections, pendingConnections, followers, following } = useSelector((state)=>state.connections);
 
+  // Local copies to allow optimistic UI updates
+  const [localConnections, setLocalConnections] = useState([])
+  const [localPending, setLocalPending] = useState([])
+  const [localFollowers, setLocalFollowers] = useState([])
+  const [localFollowing, setLocalFollowing] = useState([])
+
   const dataArray=[
     {label: 'Followers', value:followers, icon:Users},
     {label: 'Following', value:following, icon:UserCheck},
@@ -34,6 +40,9 @@ const Connections = () => {
       })
       if(data.success){
         toast.success(data.message)
+        // Optimistically update localFollowing immediately
+        setLocalFollowing(prev => prev.filter(u => u._id !== userId))
+        // Also refresh connections from server to keep store in sync
         dispatch(fetchConnections(await getToken()))
       }else{
         toast(data.message)
@@ -65,6 +74,14 @@ const Connections = () => {
       dispatch(fetchConnections(token))
     })
   },[getToken,dispatch])
+
+  // Sync local copies whenever redux state changes
+  useEffect(() => {
+    setLocalConnections(connections || [])
+    setLocalPending(pendingConnections || [])
+    setLocalFollowers(followers || [])
+    setLocalFollowing(following || [])
+  }, [connections, pendingConnections, followers, following])
 
   return (
     <div className='min-h-screen bg-slate-50'>
