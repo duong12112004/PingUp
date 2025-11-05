@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
-import { dummyUserData } from '../assets/assets'
+import { useState } from 'react'
 import { Pencil } from 'lucide-react';
 import {useDispatch, useSelector} from 'react-redux'
 import { updateUser } from '../features/user/userSlice';
 import { useAuth } from '@clerk/clerk-react';
 import toast from 'react-hot-toast';
+
+import Button from './Button';
 
 const ProfileModal = ({setShowEdit}) => {
 
@@ -58,7 +59,6 @@ const ProfileModal = ({setShowEdit}) => {
                 <input hidden type="file" accept="image/*" id="profile_picture" className='w-full p-3 border border-gray-200 rounded-lg' onChange={(e) => setEditForm({ ...editForm, profile_picture: e.target.files[0] })} />
                 <div className='group/profile relative'>
                   <img src={editForm.profile_picture ? URL.createObjectURL(editForm.profile_picture) : user.profile_picture} alt="" className='w-24 h-24 rounded-full object-cover mt-2' />
-
                   <div className='absolute hidden group-hover/profile:flex top-0 left-0 right-0 bottom-0 bg-black/20 rounded-full items-center justify-center'>
                     <Pencil className='w-5 h-5 text-white' />
                   </div>
@@ -71,8 +71,7 @@ const ProfileModal = ({setShowEdit}) => {
                 Cover Photo
                 <input hidden type="file" accept="image/*" id="cover_photo" className='w-full p-3 border border-gray-200 rounded-lg' onChange={(e) => setEditForm({ ...editForm, cover_photo: e.target.files[0] })} />
                 <div className='group/cover relative'>
-                  <img src={editForm.cover_photo ? URL.createObjectURL(editForm.cover_photo) : user.cover_photo} alt="" className='w-80 h-40 rounded-lg bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 object-cover mt-2' />
-
+                  <img src={editForm.cover_photo ? URL.createObjectURL(editForm.cover_photo) : user.cover_photo} alt="" className='w-80 h-40 rounded-lg bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 object-cover mt-2'/>
                   <div className='absolute hidden group-hover/cover:flex top-0 left-0 right-0 bottom-0 bg-black/20 rounded-lg items-center justify-center '>
                     <Pencil className='w-5 h-5 text-white' />
                   </div>
@@ -106,10 +105,12 @@ const ProfileModal = ({setShowEdit}) => {
               <input type='text' className='w-full p-3 border border-gray-200 rounded-lg' placeholder='Please enter your location' onChange={(e) => setEditForm({ ...editForm, location: e.target.value })} value={editForm.location} />
             </div>
             <div className='flex justify-end space-x-3 pt-6'>
-              <button onClick={()=>setShowEdit(false)} type='button' className='px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer'>Cancel</button>
-              <button type='submit' className='px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition cursor-pointer'>
+              <Button onClick={()=>setShowEdit(false)} type='button' variant='secondary'>
+                Cancel
+              </Button>
+              <Button type='submit'>
                 Save Changes
-              </button>
+              </Button>
             </div>
           </form>
         </div>

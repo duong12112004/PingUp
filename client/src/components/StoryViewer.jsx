@@ -1,9 +1,9 @@
 import { BadgeCheck, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const StoryViewer = ({ viewStory, setViewStory }) => {
 
-    const [progress, setProgress] = useState(0)
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         let timer, profressInterval;
@@ -12,30 +12,30 @@ const StoryViewer = ({ viewStory, setViewStory }) => {
             setProgress(0)
 
             const duration = 10000;
-            const setTime = 100
-            let elapsed = 0
+            const setTime = 100;
+            let elapsed = 0;
 
             profressInterval = setInterval(() => {
-                elapsed += setTime
-                setProgress((elapsed / duration) * 100)
-            }, setTime)
+                elapsed += setTime;
+                setProgress((elapsed / duration) * 100);
+            }, setTime);
             //close story after duration(10sec)
             timer = setTimeout(() => {
-                setViewStory(null)
-            }, duration)
+                setViewStory(null);
+            }, duration);
         }
 
         return () => {
-            clearTimeout(timer)
-            clearInterval(profressInterval)
+            clearTimeout(timer);
+            clearInterval(profressInterval);
         }
     }, [viewStory, setViewStory])
 
     const handleClose = () => {
-        setViewStory(null)
+        setViewStory(null);
     }
 
-    if (!viewStory) return null
+    if (!viewStory) return null;
 
     const renderContent = () => {
         switch (viewStory.media_type) {

@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { dummyConnectionsData } from '../assets/assets'
+import { useEffect, useState } from 'react'
 import { Search } from 'lucide-react'
 import UserCard from '../components/UserCard'
 import api from '../api/axios'
 import { useAuth } from '@clerk/clerk-react'
 import toast from 'react-hot-toast'
-import { data } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { fetchUser } from '../features/user/userSlice'
 
@@ -38,7 +36,7 @@ const Discover = () => {
     getToken().then((token)=>{
       dispatch(fetchUser(token))
     })  
-  },[])
+  },[getToken, dispatch])
 
   return (
 
@@ -47,7 +45,7 @@ const Discover = () => {
 
         {/* {Title} */}
         <div className='mb-8'>
-          <h1 className='text-3xl font-bold text-slate-900 mb-2'> Discover PeoPle
+          <h1 className='text-3xl font-bold text-slate-900 mb-2'> Discover People
           </h1>
           <p className='text-slate-600'>Connect with amazing people and grow your network</p>
         </div>

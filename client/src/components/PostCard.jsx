@@ -1,7 +1,6 @@
 import { BadgeCheck, Heart, MessageCircle, Share2 } from 'lucide-react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import moment from 'moment'
-import {dummyUserData} from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import { useAuth } from '@clerk/clerk-react'
@@ -10,13 +9,13 @@ import toast from 'react-hot-toast'
 
 const PostCard = ({post}) => {
 
-    const postWithHashtags=post.content.replace(/(#\w+)/g, '<span class="text-indigo-500">$1</span>')
+    // const postWithHashtags=post.content.replace(/(#\w+)/g, '<span class="text-indigo-500">$1</span>')
     const [likes,setLikes]=useState(post.likes_count)
     const currentUser=useSelector((state)=>state.user.value);
 
     const {getToken}= useAuth()
 
-    const handleLike=async()=>{
+    const handleLike = async() => {
         try {
             const {data}=await api.post(`/api/post/like`,{postId:post._id},{
                 headers:{Authorization: `Bearer ${await getToken()}`}
@@ -38,6 +37,21 @@ const PostCard = ({post}) => {
         }
     }
 
+    const renderContentWithHashtags = (text) => {
+        if (!text) return null;
+        const parts = text.split(/(#\w+)/g); // Tách chuỗi dựa trên regex hashtag
+        return parts.map((part, index) => {
+            if (part.startsWith('#')) {
+                return (
+                    <span key={index} className="text-indigo-500">
+                        {part}
+                    </span>
+                );
+            }
+            return part; // Trả về text bình thường
+        });
+    };
+
     const navigate=useNavigate()
 
   return (
@@ -57,7 +71,11 @@ const PostCard = ({post}) => {
         </div>
 
         {/* {Content} */}
-        {post.content && <div className='text-gray-800 text-sm whitespace-pre-line' dangerouslySetInnerHTML={{__html: postWithHashtags }}/>}
+        {post.content && (
+                <div className='text-gray-800 text-sm whitespace-pre-line'>
+                    {renderContentWithHashtags(post.content)}
+                </div>
+            )}
         {/* {Image} */}
 
         <div className='grid grid-cols-2 gap-2'>
