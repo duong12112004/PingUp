@@ -147,7 +147,7 @@ const PostCard = ({ post, onDeletePost }) => {
             key={index} 
             src={imageUrl} 
             alt={`Nội dung bài đăng`} 
-            className="w-full max-h-[600px] object-cover" 
+            className="w-full max-h-[600px] object-contain" 
           />
     ))}
   </div>
