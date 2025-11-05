@@ -10,6 +10,8 @@ import postRouter from './routes/postRoutes.js';
 import storyRouter from './routes/storyRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
 
+import commentRoutes from './routes/commentRoutes.js';
+
 const app = express();
 
 await connectDB();
@@ -25,6 +27,8 @@ app.use('/api/post',postRouter)
 app.use('/api/story',storyRouter)
 app.use('/api/message',messageRouter)
 
+app.use('/api/comments', commentRoutes);
+
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, ()=> console.log(`Serevr is running on port ${PORT}`))
+app.listen(PORT, ()=> console.log(`Server is running on port ${PORT}`))

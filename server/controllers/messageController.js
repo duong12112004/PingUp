@@ -27,7 +27,7 @@ export const sseController = (req, res) => {
     req.on('close', () => {
         //Remove the client's response object from the connections array 
         delete connections[userId]
-        console.log('Client dissconnected');
+        console.log('Client disconnected');
     })
 }
 

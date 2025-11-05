@@ -1,11 +1,13 @@
 import express from 'express';
 import {upload} from '../configs/multer.js'
 import {protect} from '../middlewares/auth.js'
-import { addPost, getFeedPost, likePost } from '../controllers/postController.js';
-const postRouter =express.Router()
+import { addPost, getFeedPost, likePost, deletePost} from '../controllers/postController.js';
+const postRouter = express.Router()
 
 postRouter.post('/add', upload.array('images',4),protect,addPost)
 postRouter.get('/feed',protect,getFeedPost)
 postRouter.post('/like',protect,likePost)
+
+postRouter.delete('/:postId',protect,deletePost)
 
 export default postRouter
