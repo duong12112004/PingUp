@@ -80,7 +80,7 @@ const PostCard = ({ post, onDeletePost }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-4 space-y-4 w-full max-w-2xl relative">
+    <div className="bg-white rounded-xl shadow p-4 space-y-4 w-full max-w-3xl relative">
       {/* Header: avatar, name, and menu */}
       <div className="flex justify-between items-start">
         <div
@@ -169,7 +169,7 @@ const PostCard = ({ post, onDeletePost }) => {
                   : 'text-gray-600 hover:text-red-500 hover:bg-red-50'
               }`}
           >
-            <Heart className={`w-4 h-4 ${isLiked ? 'fill-red-500' : ''}`} />
+            <Heart className={`w-7 h-7 ${isLiked ? 'fill-red-500' : ''}`} />
             <span>{likes.length}</span>
           </div>
 
@@ -177,7 +177,7 @@ const PostCard = ({ post, onDeletePost }) => {
             onClick={() => setIsCommentOpen((prev) => !prev)}
             className="flex items-center gap-1 text-gray-600 hover:text-blue-500 transition-colors rounded-lg hover:bg-blue-50"
           >
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="w-7 h-7" />
             <span>{commentCount}</span>
           </div>
 
@@ -185,7 +185,7 @@ const PostCard = ({ post, onDeletePost }) => {
             onClick={handleShare}
             className="flex items-center gap-1 text-gray-600 hover:text-green-500 transition-colors rounded-lg hover:bg-green-50 ml-auto"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-7 h-7" />
           </div>
         </div>
 
