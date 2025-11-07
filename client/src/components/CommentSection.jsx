@@ -96,7 +96,7 @@ const CommentSection = ({ postId, onCommentPosted, onCommentDeleted }) => {
                 // Bạn cần tạo API route này ở backend
                 const { data } = await api.get(`/api/comments/${postId}`)
                 if (data.success) {
-                    setComments(data.comments)
+                    setComments(data.comments.reverse())
                 }
             } catch (error) {
                 console.error("Lỗi khi tải bình luận:", error)
@@ -128,7 +128,7 @@ const CommentSection = ({ postId, onCommentPosted, onCommentDeleted }) => {
                 
                 // Thêm bình luận mới vào danh sách (hiển thị ngay lập tức)
                 // Giả sử backend trả về 'data.comment' đã populate user
-                setComments(prev => [...prev, data.comment])
+                setComments(prev => [data.comment, ...prev])
 
                 setNewComment("") // Xóa nội dung ô nhập
                 onCommentPosted() // Gọi callback để cập nhật số lượng ở PostCard
