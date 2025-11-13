@@ -48,23 +48,32 @@ const App = () => {
   }, [pathname])
 
   
-  useEffect(() => {
-   
+ useEffect(() => {
+    
     if (currentUser) { 
-      
       
       const eventSource = new EventSource(import.meta.env.VITE_BASEURL + '/api/message/' + currentUser._id);
 
       eventSource.onmessage = (event) => {
         const message = JSON.parse(event.data);
         
-       
         const senderId = message.from_user_id._id.toString();
+
+        // ================== THÊM ĐOẠN NÀY ==================
+        // Bỏ qua nếu tin nhắn này là do chính mình gửi.
+        // Component RecentMessages.jsx có listener RIÊNG để xử lý việc này.
+        if (senderId === currentUser._id.toString()) {
+            return;
+        }
+        // ================== KẾT THÚC THÊM ==================
+        
         const currentChatPath = `/messages/${senderId}`;
 
         if (pathnameRef.current === currentChatPath) {
+          // Người dùng đang ở đúng trang chat -> thêm tin nhắn vào Redux
           dispatch(addMessage(message));
         } else {
+          // Người dùng ở trang khác -> hiển thị thông báo toast
           toast.custom((t) => (
             <Notification t={t} message={message} />
           ), { position: "bottom-right" });
@@ -75,7 +84,7 @@ const App = () => {
         eventSource.close();
       };
     }
-   
+    
   }, [currentUser, dispatch]) 
   
 

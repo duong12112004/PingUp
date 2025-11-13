@@ -18,9 +18,10 @@ const messagesSlice = createSlice({
     reducers:{
         setMessages:(state,action)=>{
             state.messages=action.payload;
-
         },
         addMessage:(state,action)=>{
+            // Reducer này BÂY GIỜ ĐÃ ĐÚNG,
+            // vì nó thêm tin mới nhất vào CUỐI mảng (đã được sắp xếp cũ->mới)
             state.messages=[...state.messages,action.payload]
         },
         resetMessages:(state)=>{
@@ -30,7 +31,12 @@ const messagesSlice = createSlice({
     extraReducers: (builder)=>{
         builder.addCase(fetchMessages.fulfilled,(state,action)=>{
             if(action.payload){
-                state.messages=action.payload.messages
+                // ==================== SỬA ĐỔI CHÍNH ====================
+                // Dữ liệu từ API đang là [Mới nhất, Cũ hơn, Cũ nhất]
+                // Chúng ta .reverse() để state Redux luôn là [Cũ nhất, Cũ hơn, Mới nhất]
+                const chronologicalMessages = action.payload.messages.reverse();
+                state.messages = chronologicalMessages;
+                // ========================================================
             }
         })
     }
