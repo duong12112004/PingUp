@@ -222,7 +222,10 @@ export const getUserConnections =async (req,res)=>{
     try {
         const {userId} =req.auth()
         const user =await User.findById(userId).populate('connections followers following')
-
+        
+    if (!user) {
+      return res.json({ success: false, message: 'User không tồn tại hoặc đã bị xóa' });
+    }
         const connections =user.connections
         const followers= user.followers
         const following=user.following

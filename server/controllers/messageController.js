@@ -97,31 +97,35 @@ export const sendMessage = async (req, res) => {
 
 export const getChatMessages = async (req, res) => {
     try {
-        const {userId}=req.auth();
-        const {to_user_id}=req.body;
+        const { userId } = req.auth();
+        const { to_user_id } = req.body;
 
-        const messages=await Message.find({
-            $or:[
-                {from_user_id:userId,to_user_id},
-                {from_user_id:to_user_id,to_user_id:userId},
+        const messages = await Message.find({
+            $or: [
+                { from_user_id: userId, to_user_id },
+                { from_user_id: to_user_id, to_user_id: userId },
             ]
-        }).sort({createdAt:-1})
+        }).sort({ createdAt: -1 })
         //mark messages as seen
-        await Message.updateMany({from_user_id: to_user_id, to_user_id:userId},{seen:true})
+        await Message.updateMany({ from_user_id: to_user_id, to_user_id: userId }, { seen: true })
 
-        res.json({success:true, messages})
+        res.json({ success: true, messages })
     } catch (error) {
         res.json({ success: false, message: error.message })
     }
 }
 
-export const getUserRecentMessages=async(req,res)=>{
+export const getUserRecentMessages = async (req, res) => {
     try {
-        const {userId}=req.auth();
-        const messages=await Message.find({to_user_id:userId}).populate('from_user_id to_user_id').sort({createdAt:-1});
+        const { userId } = req.auth();
+        const messages = await Message.find({ to_user_id: userId }).populate('from_user_id to_user_id').sort({ createdAt: -1 });
 
-        res.json({success:true,messages});
-    } catch (error) {
-        res.json({ success: false, message: error.message })
-    }
+         const validMessages = messages.filter(
+      msg => msg.from_user_id && msg.to_user_id
+    );
+
+    res.json({ success: true, messages: validMessages });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
 }
