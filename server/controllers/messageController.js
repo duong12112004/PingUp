@@ -23,21 +23,21 @@ export const sseController = (req, res) => {
     //Send an initial event to client
     res.write('log: Connected to SSE stream\n\n')
 
-    // --- BẮT ĐẦU SỬA LỖI TIMEOUT ---
+    // --- SỬA LỖI TIMEOUT ---
     // Gửi một "nhịp tim" (heartbeat) 30 giây một lần để giữ kết nối
-    // Dấu hai chấm (:) ở đầu là một "comment" của SSE, nó sẽ bị client bỏ qua
     const intervalId = setInterval(() => {
         if (connections[userId]) {
-            res.write(': heartbeat\n\n');
+            res.write(': heartbeat\n\n'); // Dấu : là comment, client sẽ bỏ qua
         } else {
-            // Nếu kết nối không còn, tự động dọn dẹp interval
             clearInterval(intervalId);
         }
-    }, 30000); // 30.000ms = 30 giây
+    }, 30000); // 30 giây
     // --- KẾT THÚC SỬA LỖI TIMEOUT ---
+
 
     // Handle client disconnection
     req.on('close', () => {
+        clearInterval(intervalId); // <-- Dừng heartbeat khi ngắt kết nối
         //Remove the client's response object from the connections array 
         delete connections[userId]
         console.log('Client disconnected');
@@ -84,9 +84,14 @@ export const sendMessage = async (req, res) => {
 
         const messageWithUserData = await Message.findById(message._id).populate('from_user_id');
 
-        if (connections[to_user_id]) {
+        // --- SỬA LỖI CRASH (REAL-TIME) ---
+        // Chỉ gửi tin nhắn nếu người nhận CÓ KẾT NỐI
+        // VÀ (&&) người gửi (from_user_id) KHÔNG BỊ NULL (do đã bị xóa)
+        if (connections[to_user_id] && messageWithUserData && messageWithUserData.from_user_id) {
             connections[to_user_id].write(`data: ${JSON.stringify(messageWithUserData)}\n\n`)
         }
+        // --- KẾT THÚC SỬA LỖI CRASH ---
+
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: error.message })
@@ -118,14 +123,21 @@ export const getChatMessages = async (req, res) => {
 export const getUserRecentMessages = async (req, res) => {
     try {
         const { userId } = req.auth();
-        const messages = await Message.find({ to_user_id: userId }).populate('from_user_id to_user_id').sort({ createdAt: -1 });
 
-         const validMessages = messages.filter(
-      msg => msg.from_user_id && msg.to_user_id
-    );
+        // --- SỬA LỖI CRASH (TIN NHẮN GẦN ĐÂY) ---
+        const populatedMessages = await Message.find({ to_user_id: userId })
+            .populate('from_user_id to_user_id') // Populate cả hai
+            .sort({ createdAt: -1 });
 
-    res.json({ success: true, messages: validMessages });
-  } catch (error) {
-    res.json({ success: false, message: error.message });
-  }
+        // Lọc ra bất kỳ tin nhắn nào mà người gửi HOẶC người nhận đã bị xóa (bị null)
+        const validMessages = populatedMessages.filter(
+            msg => msg.from_user_id && msg.to_user_id
+        );
+
+        res.json({ success: true, messages: validMessages });
+        // --- KẾT THÚC SỬA LỖI CRASH ---
+
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
 }
