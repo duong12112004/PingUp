@@ -2,10 +2,8 @@ import fs from "fs";
 import imagekit from "../configs/imageKit.js";
 import Message from "../models/Message.js";
 
-// --- SỬA LỖI ĐA KẾT NỐI ---
 // connections giờ là một đối tượng, trong đó mỗi userId LÀ MỘT MẢNG (Array)
 const connections = {};
-// --- KẾT THÚC SỬA LỖI ---
 
 // Controller function for the SSE endpoint
 export const sseController = (req, res) => {
@@ -21,19 +19,16 @@ export const sseController = (req, res) => {
     //Send an initial event to client
     res.write('log: Connected to SSE stream\n\n');
 
-    // --- SỬA LỖI ĐA KẾT NỐI ---
     // Nếu đây là kết nối đầu tiên của user này, hãy tạo một mảng
     if (!connections[userId]) {
         connections[userId] = [];
     }
     // Thêm kết nối MỚI (res) này vào MẢNG của user
     connections[userId].push(res);
-    // --- KẾT THÚC SỬA LỖI ---
 
 
     // Gửi "nhịp tim" (heartbeat) 30 giây một lần để giữ kết nối
     const intervalId = setInterval(() => {
-        // Chúng ta phải kiểm tra xem kết nối này (res) còn trong mảng không
         if (connections[userId] && connections[userId].includes(res)) {
             res.write(': heartbeat\n\n');
         } else {
@@ -47,24 +42,21 @@ export const sseController = (req, res) => {
         clearInterval(intervalId); // Dừng heartbeat cho kết nối này
         console.log('Client disconnected: ', userId);
         
-        // --- SỬA LỖI ĐA KẾT NỐI ---
         // Xóa kết nối (res) này khỏi mảng của user
         if (connections[userId]) {
             connections[userId] = connections[userId].filter(conn => conn !== res);
-            // Nếu user không còn kết nối nào, xóa luôn key userId
             if (connections[userId].length === 0) {
                 delete connections[userId];
             }
         }
-        // --- KẾT THÚC SỬA LỖI ---
     });
 }
 
 // Send Message
 export const sendMessage = async (req, res) => {
     try {
-        const { userId } = req.auth()
-        const { to_user_id, text } = req.body;
+        const { userId } = req.auth() // Đây là NGƯỜI GỬI
+        const { to_user_id, text } = req.body; // Đây là NGƯỜI NHẬN
         const image = req.file;
 
         let media_url = '';
@@ -83,7 +75,10 @@ export const sendMessage = async (req, res) => {
             from_user_id: userId, to_user_id, text, message_type, media_url
         });
 
+        // Tạm thời trả về message chưa populate (ChatBox sẽ tự dispatch)
         res.json({ success: true, message });
+
+        // === BẮT ĐẦU LOGIC REAL-TIME (SSE) ===
 
         // Populate tin nhắn (sửa lỗi user đã xóa)
         const messageWithUserData = await Message.findById(message._id).populate('from_user_id');
@@ -93,16 +88,24 @@ export const sendMessage = async (req, res) => {
         
         const messageData = JSON.stringify(messageWithUserData);
 
-        // --- SỬA LỖI ĐA KẾT NỐI ---
-        // Gửi tin nhắn real-time cho TẤT CẢ các kết nối của người nhận
+        // 1. Gửi cho TẤT CẢ các kết nối của NGƯỜI NHẬN
         if (connections[to_user_id] && connections[to_user_id].length > 0) {
             console.log(`Sending message to ${connections[to_user_id].length} connections for user ${to_user_id}`);
-            // Lặp qua từng kết nối (res) trong mảng và gửi
             connections[to_user_id].forEach(conn => {
                 conn.write(`data: ${messageData}\n\n`);
             });
         }
-        // --- KẾT THÚC SỬA LỖI ---
+
+       
+        // 2. Gửi cho TẤT CẢ các kết nối của NGƯỜI GỬI (chính mình)
+        // Việc này để cập nhật RecentMessages.jsx của chính người gửi
+        if (connections[userId] && connections[userId].length > 0) {
+            console.log(`Sending message back to sender ${userId}`);
+            connections[userId].forEach(conn => {
+                conn.write(`data: ${messageData}\n\n`);
+            });
+        }
+        
 
     } catch (error) {
         console.log(error);
