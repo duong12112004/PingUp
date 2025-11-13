@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { UserPlus,UserCheck,UserRoundPen,MessageSquare, Users } from 'lucide-react'
+import { UserPlus,UserCheck,UserRoundPen,MessageSquare, Users, UserX } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import {useDispatch, useSelector} from 'react-redux'
 import { useAuth } from '@clerk/clerk-react'
@@ -68,6 +68,30 @@ const Connections = () => {
       toast.error(error.message)
     }
   }
+
+
+  const handleRemoveConnection = async (userId) => {
+    try {
+      const token = await getToken(); // Lấy token trước
+      const { data } = await api.post('/api/user/remove-connection', { id: userId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (data.success) {
+        toast.success(data.message);
+        // Cập nhật giao diện ngay lập tức
+        setLocalConnections(prev => prev.filter(u => u._id !== userId));
+        // Đồng bộ lại với Redux store
+        dispatch(fetchConnections(token));
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message || 'Đã xảy ra lỗi khi hủy kết bạn');
+    }
+  }
+
+
 
   useEffect(()=>{
     getToken().then((token)=>{
@@ -154,13 +178,18 @@ const Connections = () => {
                         )
                       }
                       {
-                        currentTab === 'connections' &&(
-                          <Button onClick={()=>navigate(`/messages/${user._id}`)} variant='secondary' className='w-full text-sm'>
-                            <MessageSquare className='w-4 h-4 '/>
-                              Nhắn tin
-                            </Button>
-                        )
-                      }
+                      currentTab === 'connections' && (
+                        <Button
+                          onClick={() => handleRemoveConnection(user._id)}
+                          variant='secondary'
+                          // Thêm class để nút có màu đỏ, báo hiệu hành động xóa
+                          className='w-full text-sm text-red-600 hover:text-red-700 hover:bg-red-50'
+                        >
+                          <UserX className='w-4 h-4 ' />
+                          Hủy kết bạn
+                        </Button>
+                      )
+                    }
                     </div>
                   </div>
                 </div>
