@@ -72,13 +72,13 @@ const sendNewConnectionRequestReminder= inngest.createFunction(
 
         await step.run('send-connection-request-mail', async()=>{
             const connection=await Connection.findById(connectionId).populate('from_user_id to_user_id');
-            const subject= `New Connection Request`;
+            const subject= `Bạn có lời mời kết nối mới`;
             const body=`
             <div style="font-family: Arial, sans-serif; padding: 20px;">
             <h2>Hi ${connection.to_user_id.full_name},</h2>
-            <p>Click <a href="${process.env.FRONTEND_URL}/connections" style="color: #10b981;">here</a> to accept or reject the request</p>
+            <p>Click <a href="${process.env.FRONTEND_URL}/connections" style="color: #10b981;">here</a> để chấp nhận hoặc từ chối lời mời</p>
             <br/>
-            <p>Thank,<br/>PingUp - Stay Connected</p>
+            <p>TCảm ơn,<br/>PingUp - Luôn kết nối</p>
             </div>
             `;
             await sendEmail({
@@ -96,13 +96,13 @@ const sendNewConnectionRequestReminder= inngest.createFunction(
                 return {message: "Already accepted"}
             }
 
-             const subject= `New Connection Request`;
+             const subject= `Bạn có lời mời kết nối mới`;
             const body=`
             <div style="font-family: Arial, sans-serif; padding: 20px;">
             <h2>Hi ${connection.to_user_id.full_name},</h2>
-            <p>Click <a href="${process.env.FRONTEND_URL}/connections" style="color: #10b981;">here</a> to accept or reject the request</p>
+            <p>Click <a href="${process.env.FRONTEND_URL}/connections" style="color: #10b981;">here</a> để chấp nhận hoặc từ chối lời mời</p>
             <br/>
-            <p>Thank,<br/>PingUp - Stay Connected</p>
+            <p>Cảm ơn,<br/>PingUp - Luôn kết nối</p>
             </div>
             `;
             await sendEmail({
@@ -143,15 +143,15 @@ const sendNotificationOfUnseenMessages= inngest.createFunction(
         for(const userId in unseenCount){
             const user=await User.findById(userId);
 
-            const subject=`You have ${unseenCount[userId]} unseen messages`;
+            const subject=`Bạn có ${unseenCount[userId]} tin nhắn chưa đọc`;
 
             const body=`
             <div style="font-family:Arial,sans-serif; padding: 20px; ">
                 <h2>Hi ${user.full_name},</h2>
-                <p>You have ${unseenCount[userId]} unseen messages</p>
-                <p>Click <a href="${process.env.FRONTEND_URL}/messages" style="color: #10b981;">here</a> to view them</p>
+                <p>Bạn có ${unseenCount[userId]} tin nhắn chưa đọc</p>
+                <p>Click <a href="${process.env.FRONTEND_URL}/messages" style="color: #10b981;">here</a> để xem chúng</p>
                 <br/>
-                <p>Thanks,<br/>PingUp - Stay Connected</p>
+                <p>Cảm ơn,<br/>PingUp - Luôn kết nối</p>
             </div>
             `;
 

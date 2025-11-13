@@ -14,7 +14,7 @@ export const getUserData= async (req, res) => {
         const {userId} =req.auth()
         const user = await User.findById(userId)
         if(!user){
-            return res.json({success: false,message :"User not found"})
+            return res.json({success: false,message :"Không tìm thấy người dùng"})
         }
         res.json({success: true,user})
     } catch (error) {
@@ -85,7 +85,7 @@ export const updateUserData = async (req, res) => {
 
         const user = await User.findByIdAndUpdate(userId,updatedData,{new:true})
 
-        res.json({success:true, user, message:'Profile updated successfully'})
+        res.json({success:true, user, message:'Đã cập nhật hồ sơ thành công'})
     } catch (error) {
         console.log(error);
         res.json({success: false,message :error.message})
@@ -128,7 +128,7 @@ export const followUser = async (req, res) => {
         const user =await User.findById(userId)
 
         if(user.following.includes(id)){
-            return res.json({success: false , message: 'You are already following this user'})
+            return res.json({success: false , message: 'Bạn đã theo dõi người dùng này rồi'})
         }
         user.following.push(id);
         await user.save()
@@ -137,7 +137,7 @@ export const followUser = async (req, res) => {
         toUser.followers.push(userId)
         await toUser.save()
 
-        res.json({success: true , message: 'Now you are following this user'})
+        res.json({success: true , message: 'Bạn đã bắt đầu theo dõi người dùng này'})
        
     } catch (error) {
         console.log(error);
@@ -161,7 +161,7 @@ export const unfollowUser = async (req, res) => {
 
         await toUser.save()
 
-        res.json({success: true , message: 'You are no longer following this user', following: user.following, followers: toUser.followers})
+        res.json({success: true , message: 'Bạn đã bỏ theo dõi người dùng này', following: user.following, followers: toUser.followers})
         
     } catch (error) {
         console.log(error);
@@ -181,7 +181,7 @@ export const sendConnectionRequest =async (req,res)=>{
         const last24Hours =new Date(Date.now() - 24 * 60 * 60 * 1000)
         const connectionRequests= await Connection.find({from_user_id: userId, createdAt: {$gt: last24Hours}})
         if(connectionRequests.length >=20){
-            return res.json({success: false,message: 'You have sent more than 20 connection request in last 24 hours'})
+            return res.json({success: false,message: 'Bạn đã gửi quá 20 lời mời kết nối trong 24 giờ qua'})
         }
 
         //check if users are already conected
@@ -204,12 +204,12 @@ export const sendConnectionRequest =async (req,res)=>{
                 data: {connectionId:newConnection._id}
             })
 
-            return res.json({success:true , message:'Connection request sent successfully'})
+            return res.json({success:true , message:'Đã gửi lời mời kết bạn thành công'})
         }else if(connection && connection.status === 'accepted'){
-            return res.json({success:false , message:'you are already connected with this user'})
+            return res.json({success:false , message:'Bạn đã kết bạn với người dùng này rồi'})
         }
 
-        return res.json({success:false , message:'Connection request pending'})
+        return res.json({success:false , message:'Yêu cầu kết bạn đang chờ xử lý'})
     } catch (error) {
         console.log(error);
         res.json({success: false,message :error.message})
@@ -245,7 +245,7 @@ export const acceptConnectionRequest =async (req,res)=>{
         const connection= await Connection.findOne({from_user_id:id, to_user_id:userId})
 
         if(!connection){
-            return res.json({success: false, message: 'Connection not found'});
+            return res.json({success: false, message: 'Không tìm thấy lời mời kết bạn'});
         }
 
         const user =await User.findById(userId);
@@ -259,7 +259,7 @@ export const acceptConnectionRequest =async (req,res)=>{
         connection.status ='accepted';
         await connection.save()
 
-        res.json({success: true, message: 'Connection accepted successfully'});
+        res.json({success: true, message: 'Đã chấp nhận kết bạn thành công'});
     } catch (error) {
         console.log(error);
         res.json({success: false,message :error.message})
@@ -273,7 +273,7 @@ export const getUserProfiles =async (req,res)=>{
         const {profileId}=req.body;
         const profile=await User.findById(profileId)
         if(!profile){
-            return res.json({success:false, message:"Profile not found"});
+            return res.json({success:false, message:"Không tìm thấy hồ sơ"});
         }
         const posts = await Post.find({user:profileId}).populate('user')
         res.json({success:true,profile,posts})

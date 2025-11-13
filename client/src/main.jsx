@@ -6,8 +6,12 @@ import { BrowserRouter } from 'react-router-dom'
 import { ClerkProvider } from '@clerk/clerk-react'
 import {Provider} from 'react-redux'
 import { store } from './app/store.js'
- 
-// Import your Publishable Key
+
+
+import 'moment/locale/vi';
+import moment from 'moment'
+moment.locale('vi'); // Đặt ngôn ngữ mặc định là 'vi'
+
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
 if (!PUBLISHABLE_KEY) {

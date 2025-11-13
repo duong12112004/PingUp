@@ -43,7 +43,7 @@ export const addPost = async (req, res) => {
             image_urls,
             post_type
         })
-        res.json({success:true, message:"Post created successfully"});
+        res.json({success:true, message:"Đã đăng bài thành công"});
     } catch (error) {
         console.log(error)
         res.json({success:false,message: error.message});
@@ -79,11 +79,11 @@ export const likePost = async (req, res) => {
         if(post.likes_count.includes(userId)){
             post.likes_count=post.likes_count.filter(user=>user !==userId)
             await post.save();
-            res.json({success:true,message:'Post unliked'}) 
+            res.json({success:true,message:'Đã bỏ thích bài đăng'}) 
         }else{
             post.likes_count.push(userId)
             await post.save()
-            res.json({success:true,message:'Post liked'}) 
+            res.json({success:true,message:'Đã thích bài đăng'}) 
         }
     } catch (error) {
         console.log(error)
@@ -99,19 +99,19 @@ export const deletePost = async (req, res) => {
         const post = await Post.findById(postId)
 
         if(!post){
-            return res.status(404).json({success:false,message:"Post not found"});
+            return res.status(404).json({success:false,message:"Không tìm thấy bài đăng"});
         }
         // post.user may be string (User._id is string) or ObjectId; compare accordingly
         const ownerId = typeof post.user === 'string' ? post.user : post.user.toString();
         if(ownerId !== userId){
-            return res.status(403).json({success:false,message:"Unauthorized action"});
+            return res.status(403).json({success:false,message:"Bạn không có quyền thực hiện hành động này"});
         }
 
         // delete related comments
         await Comment.deleteMany({ post: postId });
 
         await Post.findByIdAndDelete(postId);
-        res.json({success:true,message:"Post deleted successfully"});
+        res.json({success:true,message:"Đã xóa bài đăng thành công"});
     } catch (error) {
         console.log(error)
         res.json({success:false,message: error.message});

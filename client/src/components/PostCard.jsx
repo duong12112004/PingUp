@@ -4,6 +4,7 @@ import ConfirmModal from './ConfirmModal';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+
 import { useAuth } from '@clerk/clerk-react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
@@ -125,7 +126,7 @@ const PostCard = ({ post, onDeletePost }) => {
                       className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                     >
                       <Trash2 className="w-4 h-4" />
-                      Delete Post
+                      Xóa bài đăng
                     </button>
                   </li>
                 </ul>

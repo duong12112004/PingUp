@@ -11,7 +11,7 @@ import Button from '../components/Button'
 
 const Connections = () => {
 
-  const [currentTab, setCurrentTab] = useState('Followers');
+  const [currentTab, setCurrentTab] = useState('followers');
 
   const navigate = useNavigate();
   const { getToken } = useAuth();
@@ -27,10 +27,10 @@ const Connections = () => {
   const [localFollowing, setLocalFollowing] = useState([])
 
   const dataArray=[
-    {label: 'Followers', value:followers, icon:Users},
-    {label: 'Following', value:following, icon:UserCheck},
-    {label: 'Pending', value:pendingConnections, icon:UserRoundPen},
-    {label: 'Connections', value:connections, icon:UserPlus},
+    {key: 'followers', label: 'Người theo dõi', value:followers, icon:Users},
+    {key: 'following', label: 'Đang theo dõi', value:following, icon:UserCheck},
+    {key: 'pending', label: 'Đang chờ', value:pendingConnections, icon:UserRoundPen},
+    {key: 'connections', label: 'Bạn bè', value:connections, icon:UserPlus},
   ];
 
   const handleUnfollow = async (userId)=>{
@@ -90,8 +90,8 @@ const Connections = () => {
         {/* {title } */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-slate-900 mb-2'>
-          Connections</h1>
-          <p className='text-slate-600'>Manage your network and discover new connections</p>
+          Kết nối</h1>
+          <p className='text-slate-600'>Quản lý bạn bè và tìm kiếm các mối quan hệ mới </p>
         </div>
 
         {/* {Counts} */}
@@ -110,7 +110,7 @@ const Connections = () => {
         <div className='inline-flex flex-wrap items-center border border-gray-200 rounded-md p-1 bg-white shadow-sm'>
           {
             dataArray.map((tab)=>(
-              <button onClick={()=>setCurrentTab(tab.label)} key={tab.label}  className={`cursor-pointer flex items-center px-3 py-1 text-sm rounded-md transition-colors ${currentTab===tab.label ? 'bg-white font-medium text-black' : 'text-gray-500 hover:text-black'}`}>
+              <button onClick={()=>setCurrentTab(tab.key)} key={tab.key}  className={`cursor-pointer flex items-center px-3 py-1 text-sm rounded-md transition-colors ${currentTab===tab.key ? 'bg-white font-medium text-black' : 'text-gray-500 hover:text-black'}`}>
                   <tab.icon className='w-4 h-4' />
                   <span className='ml-1'>{tab.label}</span>
                   {
@@ -126,7 +126,7 @@ const Connections = () => {
         {/* {Connections} */}
         <div className='flex flex-wrap gap-6 mt-6'>
             {
-              dataArray.find((item)=>item.label === currentTab).value.map((user)=>(
+              dataArray.find((item)=>item.key === currentTab).value.map((user)=>(
                 <div key={user._id} className='w-full max-w-88 flex gap-5 p-6 bg-white shadow rounded-md'>
                   <img src={user.profile_picture} alt="" className='rounded-full w-12 h-12 shadow-md mx-auto'/>
                   <div className='flex-1'>
@@ -136,28 +136,28 @@ const Connections = () => {
                     <div className='flex max-sm:flex-col gap-2 mt-4 '>
                       {
                         <Button onClick={()=>navigate(`/profile/${user._id}`)}  className='w-full text-sm'>
-                          View Profile
+                          Xem trang cá nhân
                         </Button>
                       }
                       {
-                        currentTab === 'Following' &&(
+                        currentTab === 'following' &&(
                           <Button onClick={()=>handleUnfollow(user._id)} variant='secondary' className='w-full text-sm'>
-                            Unfollow
+                            Bỏ theo dõi
                           </Button>
                         )
                       }
                       {
-                        currentTab === 'Pending' &&(
+                        currentTab === 'pending' &&(
                           <Button onClick={()=>acceptConnection(user._id)} variant='secondary' className='w-full text-sm'>
-                            Accept
+                            Chấp nhận
                           </Button>
                         )
                       }
                       {
-                        currentTab === 'Connections' &&(
+                        currentTab === 'connections' &&(
                           <Button onClick={()=>navigate(`/messages/${user._id}`)} variant='secondary' className='w-full text-sm'>
                             <MessageSquare className='w-4 h-4 '/>
-                              Message
+                              Nhắn tin
                             </Button>
                         )
                       }

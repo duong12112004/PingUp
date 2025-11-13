@@ -27,7 +27,7 @@ const App = () => {
   const pathnameRef = useRef(pathname);
 
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     const fetchData = async () => {
 
@@ -69,7 +69,7 @@ const App = () => {
 
   if (!isLoaded) {
     // Trạng thái chờ: có thể return spinner, loading screen
-    return <div className="flex items-center justify-center h-screen">Loading....</div>
+    return <div className="flex items-center justify-center h-screen">Đang tải...</div>
   }
 
   return (

@@ -55,10 +55,9 @@ const Feed = () => {
       {/* {right sidebar} */}
       <div className='max-xl:hidden sticky top-0 '>
           <div className='max-w-xs bg-white text-xs p-4 rounded-md'>
-            <h3 className='text-slate-800 font-semibold'>sponsored</h3>
+            
             <img src={assets.sponsored_img} alt="" className='w-75 h-50 rounded-md'/>
-            <p className='text-slate-600'>Email marketing</p>
-            <p className='text-slate-600'>Supercharge your marketing with a powerful, easy-to-use platform built for result.</p>
+            <p className='text-slate-600'>Tăng cường hoạt động của bạn với một nền tảng mạnh mẽ, dễ sử dụng được xây dựng để mang lại kết quả.</p>
           </div>
           <RecentMessages/>
       </div>

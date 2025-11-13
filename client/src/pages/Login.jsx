@@ -20,11 +20,11 @@ const Login = () => {
                                 {Array(5).fill(0).map((_, i) => (<Star key={i}
                                     className='size-4 md:size-4.5 text-transparent fill-amber-500' />))}
                             </div>
-                            <p>Used by 12k+ developers</p>
+                            <p>Được sử dụng từ nhiều thành viên</p>
                         </div>
                     </div>
-                    <h1 className='text-3xl md:text-6xl md:pb-2 font-bold bg-gradient-to-r from-indigo-950 to-indigo-800 bg-clip-text text-transparent'>More than just friends truly connect</h1>
-                    <p className='text-xl md:text-3xl text-indigo-900 max-w-72 md:max-w-md '>connect with global community on pingup.</p>
+                    <h1 className='text-3xl md:text-6xl md:pb-2 font-bold bg-gradient-to-r from-indigo-950 to-indigo-800 bg-clip-text text-transparent'>Hơn cả bạn bè, đó là kết nối thực sự</h1>
+                    <p className='text-xl md:text-3xl text-indigo-900 max-w-72 md:max-w-md '>Kết nối với cộng đồng toàn cầu trên Pingup.</p>
                 </div>
                 <span className='md:h-10'></span>
             </div>

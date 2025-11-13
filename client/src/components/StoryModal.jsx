@@ -26,7 +26,7 @@ const StoryModal = ({ setShowModal, fetchStories }) => {
     if (file) {
      if(file.type.startsWith("video")){
       if(file.size>MAX_VIDEO_SIZE_MB*1024*1024){
-        toast.error(`Video file size cannot exceed ${MAX_VIDEO_SIZE_MB}MB.`);
+        toast.error(`Kích thước video không thể vượt quá ${MAX_VIDEO_SIZE_MB}MB.`);
         setMedia(null);
         setPreviewUrl(null);
         return;
@@ -37,7 +37,7 @@ const StoryModal = ({ setShowModal, fetchStories }) => {
         window.URL.revokeObjectURL(video.src);
       }
       if(video.duration > MAX_VIDEO_DURATION){
-        toast.error("Video duration cannot exceed 1 minute.");
+        toast.error("Thời lượng video không thể vượt quá 1 phút.");
         setMedia(null);
         setPreviewUrl(null);
 
@@ -60,7 +60,7 @@ const StoryModal = ({ setShowModal, fetchStories }) => {
   const handleCreateStory = async () => {
     const media_type=mode=== 'media' ? media.type.startsWith('image') ? 'image' : 'video' : 'text';
     if (media_type === "text" && !text){
-      throw new Error("Please enter some text");
+      throw new Error("Vui lòng nhập nội dung");
     }
     let formData = new FormData();
     formData.append('content', text);
@@ -75,7 +75,7 @@ const StoryModal = ({ setShowModal, fetchStories }) => {
       })
       if(data.success){
         setShowModal(false)
-        toast.success("Story create successfully" )
+        toast.success("Đã tạo tin thành công" )
         fetchStories()
       }else{
         toast.error(data.message)
@@ -92,13 +92,13 @@ const StoryModal = ({ setShowModal, fetchStories }) => {
           <button onClick={() => setShowModal(false)} className='text-white p-2 cursor-pointer'>
             <ArrowLeft />
           </button>
-          <h2 className='text-lg font-semibold'>Create Story</h2>
+          <h2 className='text-lg font-semibold'>Tạo tin</h2>
           <span className='w-10'></span>
         </div>
         <div className='rounded-lg h-96 flex items-center justify-center relative ' style={{ backgroundColor: background }}>
           {
             mode === 'text' && (
-              <textarea className='bg-transparent text-white w-full h-full p-6 text-lg resize-none focus:outline-none ' placeholder="What's on your mind?" onChange={(e) => setText(e.target.value)} value={text} />
+              <textarea className='bg-transparent text-white w-full h-full p-6 text-lg resize-none focus:outline-none ' placeholder="Bạn đang nghĩ gì?" onChange={(e) => setText(e.target.value)} value={text} />
             )
           }
           {
@@ -125,17 +125,17 @@ const StoryModal = ({ setShowModal, fetchStories }) => {
             <button onClick={()=>{
               setMode('text'); setMedia(null) ; setPreviewUrl(null)
             }} className={`flex-1 flex items-center justify-center cursor-pointer gap-2 p-2 rounded ${mode==='text' ? "bg-white text-black":"bg-zinc-800"}`}>
-                <TextIcon size={18}/> Text
+                <TextIcon size={18}/> Văn bản
             </button>
             <label className={`flex-1 flex items-center justify-center gap-2 p-2 rounded cursor-pointer ${mode==='media'?"bg-white text-black ":"bg-zinc-800"}`}>
                 <input onChange={handleMediaUpload} type="file" accept='image/*, video/*' className='hidden'/>
-                <Upload size={18}/> Photo/Video
+                <Upload size={18}/> Ảnh/Video
             </label>
         </div>
         <Button onClick={()=>toast.promise(handleCreateStory(),{
-          loading:'Saving...',
+          loading:'Đang đăng...',
         })} className='py-3 mt-4 w-full'>
-          <Sparkle size={18}/>Create Story
+          <Sparkle size={18}/>Đăng tin
 
         </Button>
       </div>

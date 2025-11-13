@@ -45,7 +45,7 @@ const RecentMessages = () => {
     },[user, fetchRecentMessages])
   return (
     <div className='bg-white max-w-xs mt-4 p-4 min-h-20 rounded-md shadow text-xs text-slate-800 '>
-        <h3 className='font-semibold text-slate-8 mb-4'>Recent Messages</h3>
+        <h3 className='font-semibold text-slate-8 mb-4'>Tin nhắn gần đây</h3>
         <div className='flex flex-col max-h-56 overflow-y-scroll no-scrollbar'>
             {
                 messages.map((message,index)=>(

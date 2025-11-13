@@ -60,13 +60,13 @@ const UserCard = ({user}) => {
             <MapPin className='w-4 h-4 '/> {user.location}
         </div>
         <div className='flex items-center gap-1 border border-gray-300 rounded-full px-3 py-1'>
-            <span>{user.followers.length}</span> Followers
+            <span>{user.followers.length}</span> Người theo dõi
         </div>
       </div>
       <div className='flex mt-4 gap-2 '>
             {/* {follow button} */}
             <Button onClick={handleFollow} disabled={currentUser?.following.includes(user._id)} className='w-full '>
-                <UserPlus className='w-4 h-4 '/>{currentUser?.following.includes(user._id) ? 'Following' : 'Follow'}
+                <UserPlus className='w-4 h-4 '/>{currentUser?.following.includes(user._id) ? 'Đang theo dõi' : 'Theo dõi'}
             </Button>
             {/* {  Connection Request Button / Message Button  } */}
             <Button onClick={handleConnectionRequest} variant='secondary ' className='w-16'>

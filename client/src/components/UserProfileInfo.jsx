@@ -17,12 +17,12 @@ const UserProfileInfo = ({user ,posts,profileId,setShowEdit}) => {
                             <h1 className='text-2xl font-bold text-gray-900'>{user.full_name}</h1>
                             <Verified className='w-6 h-6 text-blue-500'/>
                         </div>
-                        <p className='text-gray-600 '>{user.username ? `@${user.username}` : 'Add a username'}</p>
+                        <p className='text-gray-600 '>{user.username ? `@${user.username}` : 'Thêm tên người dùng'}</p>
                     </div>
                     {/* {if user is not on others profile that means he is opening his profile so we will give edit button} */}
                     {!profileId &&
                         <Button onClick={()=>setShowEdit(true)} variant='text' className='mt-4 md:mt-0'>
-                            <PenBox className='w-4 h-4'/>Edit
+                            <PenBox className='w-4 h-4'/>Chỉnh sửa
                         </Button>
                     }
                 </div>
@@ -30,26 +30,26 @@ const UserProfileInfo = ({user ,posts,profileId,setShowEdit}) => {
                 <div className='flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-500 mt-4'>
                     <span className='flex items-center gap-1.5'>
                         <MapPin className='w-4 h-4'/>
-                        {user.location ? user.location : 'Add location'}
+                        {user.location ? user.location : 'Thêm quê quán'}
 
                     </span>
                     <span className='flex items-center gap-1.5'>
                         <Calendar className='w-4 h-4'/>
-                        Joined <span className='font-medium'>{moment(user.createdAt).fromNow()}</span>
+                        Đã tham gia <span className='font-medium'>{moment(user.createdAt).fromNow()}</span>
                     </span>
                 </div>
                 <div className='flex items-center gap-6 mt-6 border-t border-gray-200 pt-4 '>
                     <div >
                         <span className='sm:text-xl font-bold text-gray-900'>{posts.length}</span>
-                        <span className='text-xs sm:text-sm text-gray-500 ml-1.5'>Posts</span>
+                        <span className='text-xs sm:text-sm text-gray-500 ml-1.5'>Bài đăng</span>
                     </div>
                      <div >
                         <span className='sm:text-xl font-bold text-gray-900'>{user.followers.length}</span>
-                        <span className='text-xs sm:text-sm text-gray-500 ml-1.5'>Followers</span>
+                        <span className='text-xs sm:text-sm text-gray-500 ml-1.5'>Người theo dõi</span>
                     </div>
                     <div >
                         <span className='sm:text-xl font-bold text-gray-900'>{user.following.length}</span>
-                        <span className='text-xs sm:text-sm text-gray-500 ml-1.5'>Following</span>
+                        <span className='text-xs sm:text-sm text-gray-500 ml-1.5'>Đang theo dõi</span>
                     </div>
                 </div>
             </div>
