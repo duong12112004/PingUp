@@ -41,7 +41,7 @@ export const sseController = (req, res) => {
     req.on('close', () => {
         clearInterval(intervalId); // Dừng heartbeat cho kết nối này
         console.log('Client disconnected: ', userId);
-        
+
         // Xóa kết nối (res) này khỏi mảng của user
         if (connections[userId]) {
             connections[userId] = connections[userId].filter(conn => conn !== res);
@@ -67,7 +67,7 @@ export const sendMessage = async (req, res) => {
             const response = await imagekit.upload({ file: fileBuffer, fileName: image.originalname });
             media_url = imagekit.url({
                 path: response.filePath,
-                transformation: [ { quality: 'auto' }, { format: 'webp' }, { width: '1280' }]
+                transformation: [{ quality: 'auto' }, { format: 'webp' }, { width: '1280' }]
             });
         }
 
@@ -85,10 +85,10 @@ export const sendMessage = async (req, res) => {
         if (!messageWithUserData || !messageWithUserData.from_user_id) {
             return; // Nếu người gửi bị xóa, không gửi SSE
         }
-        
+
         const messageData = JSON.stringify(messageWithUserData);
 
-        // 1. Gửi cho TẤT CẢ các kết nối của NGƯỜI NHẬN
+        
         if (connections[to_user_id] && connections[to_user_id].length > 0) {
             console.log(`Sending message to ${connections[to_user_id].length} connections for user ${to_user_id}`);
             connections[to_user_id].forEach(conn => {
@@ -96,16 +96,7 @@ export const sendMessage = async (req, res) => {
             });
         }
 
-       
-        // 2. Gửi cho TẤT CẢ các kết nối của NGƯỜI GỬI (chính mình)
-        // Việc này để cập nhật RecentMessages.jsx của chính người gửi
-        if (connections[userId] && connections[userId].length > 0) {
-            console.log(`Sending message back to sender ${userId}`);
-            connections[userId].forEach(conn => {
-                conn.write(`data: ${messageData}\n\n`);
-            });
-        }
-        
+        F
 
     } catch (error) {
         console.log(error);
@@ -118,7 +109,7 @@ export const getChatMessages = async (req, res) => {
     try {
         const { userId } = req.auth();
         const { to_user_id } = req.body;
-        
+
         const messages = await Message.find({
             $or: [
                 { from_user_id: userId, to_user_id },
@@ -137,8 +128,8 @@ export const getUserRecentMessages = async (req, res) => {
     try {
         const { userId } = req.auth();
         // Lấy Cả tin nhắn gửi và nhận
-        const populatedMessages = await Message.find({ 
-            $or: [{ from_user_id: userId }, { to_user_id: userId }] 
+        const populatedMessages = await Message.find({
+            $or: [{ from_user_id: userId }, { to_user_id: userId }]
         })
             .populate('from_user_id to_user_id')
             .sort({ createdAt: -1 });
