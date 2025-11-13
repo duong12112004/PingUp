@@ -285,3 +285,40 @@ export const getUserProfiles =async (req,res)=>{
         res.json({success: false,message :error.message})
     }
 }
+
+export const removeConnection = async (req, res) => {
+  try {
+    // Giả sử middleware xác thực của bạn lưu ID người dùng vào req.auth.userId
+    const currentUserId = req.auth.userId; 
+    const userToUnfriendId = req.body.id;
+
+    if (!userToUnfriendId) {
+      return res.status(400).json({ success: false, message: 'Không tìm thấy ID người dùng' });
+    }
+
+    // 1. Xóa người B khỏi danh sách bạn bè của người A
+    await User.findByIdAndUpdate(currentUserId, {
+      $pull: { connections: userToUnfriendId }
+    });
+
+    // 2. Xóa người A khỏi danh sách bạn bè của người B
+    await User.findByIdAndUpdate(userToUnfriendId, {
+      $pull: { connections: currentUserId }
+    });
+
+    // 3. (Tùy chọn) Xóa bản ghi Connection đã chấp nhận
+    await Connection.findOneAndDelete({
+      status: 'accepted',
+      $or: [
+        { from_user_id: currentUserId, to_user_id: userToUnfriendId },
+        { from_user_id: userToUnfriendId, to_user_id: currentUserId }
+      ]
+    });
+
+    return res.status(200).json({ success: true, message: 'Đã hủy kết bạn thành công' });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Lỗi máy chủ' });
+  }
+};
