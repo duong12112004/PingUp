@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
-import { useDispatch } from 'react-redux'
+import { useDispatch,useSelector } from 'react-redux'
 import { useUser, useAuth } from '@clerk/clerk-react'
 
 import Login from './pages/Login'
@@ -22,6 +22,7 @@ import Notification from './components/Notification'
 
 const App = () => {
   const { user } = useUser();
+  const currentUser = useSelector((state) => state.user.value); 
   const { getToken } = useAuth();
   const { pathname } = useLocation();
   const pathnameRef = useRef(pathname);
@@ -44,28 +45,35 @@ const App = () => {
     pathnameRef.current = pathname;
   },[pathname])
 
-  useEffect(()=>{
-    if(user){
-      const eventSource=new EventSource(import.meta.env.VITE_BASEURL + '/api/message/'+user.id)
+  useEffect(() => {
+    // 1. Chỉ chạy khi currentUser (từ Redux) đã được tải
+    if (currentUser) { 
+      
+      // 2. Dùng currentUser._id (MongoDB ID) thay vì user.id (Clerk ID)
+      const eventSource = new EventSource(import.meta.env.VITE_BASEURL + '/api/message/' + currentUser._id);
 
-      eventSource.onmessage=(event)=>{
-        const message =JSON.parse(event.data)
+      eventSource.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        
+        // 3. (Cải tiến) Chuyển ID người gửi thành string để so sánh an toàn
+        const senderId = message.from_user_id._id.toString();
+        const currentChatPath = `/messages/${senderId}`;
 
-        if(pathnameRef.current ===('/messages/'+message.from_user_id._id)){
-          dispatch(addMessage(message))
-        }else{
-          toast.custom((t)=>(
-            <Notification t={t} message={message}/>
-          ),{position:"bottom-right"})
+        if (pathnameRef.current === currentChatPath) {
+          dispatch(addMessage(message));
+        } else {
+          toast.custom((t) => (
+            <Notification t={t} message={message} />
+          ), { position: "bottom-right" });
         }
-      }
-      return ()=>{
-        eventSource.close()
-      }
-    }
-  },[user,dispatch])
+      };
 
-  const { isLoaded } = useUser();
+      return () => {
+        eventSource.close();
+      };
+    }
+    // 4. Thay đổi dependency từ [user] thành [currentUser]
+  }, [currentUser, dispatch]) 
 
   if (!isLoaded) {
     // Trạng thái chờ: có thể return spinner, loading screen
