@@ -23,6 +23,19 @@ export const sseController = (req, res) => {
     //Send an initial event to client
     res.write('log: Connected to SSE stream\n\n')
 
+    // --- BẮT ĐẦU SỬA LỖI TIMEOUT ---
+    // Gửi một "nhịp tim" (heartbeat) 30 giây một lần để giữ kết nối
+    // Dấu hai chấm (:) ở đầu là một "comment" của SSE, nó sẽ bị client bỏ qua
+    const intervalId = setInterval(() => {
+        if (connections[userId]) {
+            res.write(': heartbeat\n\n');
+        } else {
+            // Nếu kết nối không còn, tự động dọn dẹp interval
+            clearInterval(intervalId);
+        }
+    }, 30000); // 30.000ms = 30 giây
+    // --- KẾT THÚC SỬA LỖI TIMEOUT ---
+
     // Handle client disconnection
     req.on('close', () => {
         //Remove the client's response object from the connections array 
