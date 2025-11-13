@@ -96,8 +96,6 @@ export const sendMessage = async (req, res) => {
             });
         }
 
-        F
-
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: error.message })
