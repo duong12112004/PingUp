@@ -88,17 +88,25 @@ export const sendMessage = async (req, res) => {
 
         const messageData = JSON.stringify(messageWithUserData);
 
-        
+
         if (connections[to_user_id] && connections[to_user_id].length > 0) {
             console.log(`Sending message to ${connections[to_user_id].length} connections for user ${to_user_id}`);
             connections[to_user_id].forEach(conn => {
                 conn.write(`data: ${messageData}\n\n`);
             });
         }
+        if (connections[userId] && connections[userId].length > 0) {
+            console.log(`Sending message to ${connections[userId].length} connections for user ${userId} (sender)`);
+            connections[userId].forEach(conn => {
+                conn.write(`data: ${messageData}\n\n`);
+            });
+        }
 
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: error.message })
+        if (!res.headersSent) {
+            res.json({ success: false, message: error.message });
+        }
     }
 }
 
